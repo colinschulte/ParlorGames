@@ -1,0 +1,22 @@
+﻿@model War
+
+
+@{
+    ViewBag.Title = "Blackjack";
+}
+
+<h1>Blackjack</h1>
+
+<h5 my-opponent="@Model.Opponent"></h5>
+<vc:hand-display hand="@Model.Opponent.Hand"></vc:hand-display>
+
+<h5 my-player="@Model.Player"></h5>
+<vc:hand-display hand="@Model.Player.Hand"></vc:hand-display>
+
+<div class="row mb-2">
+
+    <div class="col-2 offset-3">
+        <my-black-jack-action action="Deal" />
+    </div>
+
+</div>
