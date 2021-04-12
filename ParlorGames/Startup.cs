@@ -32,6 +32,7 @@ namespace ParlorGames
             services.AddControllersWithViews();
 
             services.AddTransient<IBlackjack, Blackjack>();
+            services.AddTransient<IWar, War>();
             services.AddHttpContextAccessor();
         }
 

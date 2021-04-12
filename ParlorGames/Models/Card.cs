@@ -31,5 +31,21 @@ namespace ParlorGames.Models
                     return Convert.ToInt32(Rank);
             }
         }
+        public int WarValue
+        {
+            get
+            {
+                if (IsAce)
+                    return 14;
+                else if (Rank == "J")
+                    return 11;
+                else if (Rank == "Q")
+                    return 12;
+                else if (Rank == "K")
+                    return 13;
+                else
+                    return Convert.ToInt32(Rank);
+            }
+        }
     }
 }

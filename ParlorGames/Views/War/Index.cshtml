@@ -2,21 +2,23 @@
 
 
 @{
-    ViewBag.Title = "Blackjack";
+    ViewBag.Title = "War";
 }
 
-<h1>Blackjack</h1>
+<h1>War</h1>
 
 <h5 my-opponent="@Model.Opponent"></h5>
 <vc:hand-display hand="@Model.Opponent.Hand"></vc:hand-display>
+<p>@Model.Opponent.CardCount</p>
 
 <h5 my-player="@Model.Player"></h5>
 <vc:hand-display hand="@Model.Player.Hand"></vc:hand-display>
+<p>@Model.Player.CardCount</p>
 
 <div class="row mb-2">
 
-    <div class="col-2 offset-3">
-        <my-black-jack-action action="Deal" />
+    <div class="col-2">
+        <my-black-jack-action action="Flip" />
     </div>
 
 </div>

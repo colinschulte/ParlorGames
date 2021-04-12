@@ -1,38 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using ParlorGames.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace ParlorGames.Controllers
 {
-    public class HomeController : Controller
+    public class BlackjackController : Controller
     {
-
         private IBlackjack bjGame { get; set; }
-        public HomeController(IBlackjack b) => bjGame = b;
-
-        private IWar warGame { get; set; }
-        //public HomeController(IWar w) => warGame = w;
-
-        //private readonly ILogger<HomeController> _logger;
-
-        //public HomeController(ILogger<HomeController> logger)
-        //{
-        //    _logger = logger;
-        //}
-
+        public BlackjackController(IBlackjack b) => bjGame = b;
         public IActionResult Index()
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
+            return View(bjGame);
         }
 
         public RedirectToActionResult Deal()
@@ -60,7 +41,7 @@ namespace ParlorGames.Controllers
                 TempData["background"] = "info";
             }
 
-            return RedirectToAction("Blackjack");
+            return RedirectToAction("Index");
 
         }
 
@@ -79,7 +60,7 @@ namespace ParlorGames.Controllers
                 TempData["background"] = "danger";
             }
 
-            return RedirectToAction("Blackjack");
+            return RedirectToAction("Index");
         }
 
         public RedirectToActionResult Stand()
@@ -117,15 +98,10 @@ namespace ParlorGames.Controllers
                 TempData["background"] = "info";
             }
 
-            return RedirectToAction("Blackjack");
+            return RedirectToAction("Index");
 
 
 
-        }
-//        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

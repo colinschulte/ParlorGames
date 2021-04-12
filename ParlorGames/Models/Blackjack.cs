@@ -48,8 +48,8 @@ namespace ParlorGames.Models
             }
             else
             {
-                Player.NewHand(Deck.Deal(), Deck.Deal());
-                Dealer.NewHand(Deck.Deal(), Deck.Deal());
+                Player.NewBJHand(Deck.Deal(), Deck.Deal());
+                Dealer.NewBJHand(Deck.Deal(), Deck.Deal());
 
                 Dealer.Hand.HideHoleCard = true;
                 NeedsDeal = false;
