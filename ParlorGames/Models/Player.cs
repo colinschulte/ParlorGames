@@ -12,6 +12,10 @@ namespace ParlorGames.Models
         public Hand Hand { get; set; }
         public WarDeck WarDeck { get; set; }
         public int TotalWinnings { get; set; }
+        public int GameWins { get; set; }
+        public int GameLosses { get; set; }
+        public int TotalWins { get; set; }
+        public int TotalLosses { get; set; }
         public bool Winner { get; set; }
         public int CardCount { get; set; }
 

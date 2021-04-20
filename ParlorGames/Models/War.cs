@@ -17,9 +17,10 @@ namespace ParlorGames.Models
         public Player Player { get; set; }
         public Opponent Opponent { get; set; }
         public bool IsWar { get; set; }
+        public bool newGame { get; set; }
         public enum Result
         {
-            Shuffling, Continue, DealerBust, DealerBlackJack, OpponentWin,
+            Shuffling, Continue, PlayerWarWin, OpponentWarWin, OpponentWin,
             PlayerBust, PlayerBlackJack, PlayerWin, Tie, Push
         }
 
@@ -36,6 +37,8 @@ namespace ParlorGames.Models
             Opponent = session.GetObject<Opponent>("opponent") ?? new Opponent();
             int warVal = session.GetInt32("iswar") ?? 0;  // default value of false (0)
             IsWar = Convert.ToBoolean(warVal);
+            int newGameVal = session.GetInt32("newgame") ?? 1;
+            newGame = Convert.ToBoolean(newGameVal);
         }
 
         public Result Flip()
@@ -43,67 +46,108 @@ namespace ParlorGames.Models
             var result = Result.Continue;  // default result
 
             // on first load, deck is null - shuffle
-            if (PlayerDeck.Cards == null)
+            if (newGame == true)
             {
                 var WarDecks = Deck.MakeWarDecks();
                 PlayerDeck = WarDecks.Item1;
                 OpponentDeck = WarDecks.Item2;
                 Player.CardCount = PlayerDeck.Cards.Count();
                 Opponent.CardCount = OpponentDeck.Cards.Count();
+                newGame = false;
             }
 
             if (IsWar == true)
             {
-                int CardsInHand = PlayerHand.Cards.Count;
+                int PlayerCardsInHand = PlayerHand.Cards.Count;
+                int OpponentCardsInHand = OpponentHand.Cards.Count;
                 int i = 0;
                 while (i < 4)
                 {
-                    PlayerHand.Cards.Add(PlayerDeck.Cards[CardsInHand+i]);
-                    OpponentHand.Cards.Add(OpponentDeck.Cards[CardsInHand + i]);
-                    i++;
+                    if(PlayerCardsInHand + i <= PlayerDeck.Cards.Count)
+                    {
+                        PlayerHand.Cards.Add(PlayerDeck.Cards[PlayerCardsInHand + i]);
+                        i++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                int j = 0;
+                while (j < 4)
+                {
+                    if(OpponentCardsInHand + j <= OpponentDeck.Cards.Count)
+                    {
+                        OpponentHand.Cards.Add(OpponentDeck.Cards[OpponentCardsInHand + j]);
+                        j++;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
                 Player.Hand = PlayerHand;
                 Opponent.Hand = OpponentHand;
-                CardsInHand = PlayerHand.Cards.Count;
-                if (PlayerHand.Cards[CardsInHand-1].WarValue > OpponentHand.Cards[CardsInHand-1].WarValue)
+                PlayerCardsInHand = PlayerHand.Cards.Count;
+                OpponentCardsInHand = OpponentHand.Cards.Count;
+                if (PlayerHand.Cards[PlayerCardsInHand-1].WarValue > OpponentHand.Cards[OpponentCardsInHand-1].WarValue)
                 {
                     result = Result.PlayerWin;
                     Player.Winner = true;
                     int count = 0;
-                    while(count < CardsInHand)
+                    while(count < PlayerCardsInHand)
                     {
                         PlayerDeck.Cards.Add(PlayerDeck.Cards[0]);
                         PlayerDeck.Cards.Remove(PlayerDeck.Cards[0]);
+                        count++;
+                    }
+                    count = 0;
+                    while(count < OpponentCardsInHand)
+                    {
                         PlayerDeck.Cards.Add(OpponentDeck.Cards[0]);
                         OpponentDeck.Cards.Remove(OpponentDeck.Cards[0]);
-                        count++;
+                        count ++;
                     }
                     Player.CardCount = PlayerDeck.Cards.Count();
                     Opponent.CardCount = OpponentDeck.Cards.Count();
+                    if (OpponentDeck.Cards.Count == 0)
+                    {
+                        result = Result.PlayerWarWin;
+                        newGame = true;
+                    }
                     IsWar = false;
                     Update();
                 }
-                else if (PlayerHand.Cards[CardsInHand-1].WarValue < OpponentHand.Cards[CardsInHand-1].WarValue)
+                else if (PlayerHand.Cards[PlayerCardsInHand-1].WarValue < OpponentHand.Cards[OpponentCardsInHand-1].WarValue)
                 {
                     result = Result.OpponentWin;
                     Player.Winner = false;
 
                     int count = 0;
-                    while (count < CardsInHand)
+                    while (count < PlayerCardsInHand)
                     {
                         OpponentDeck.Cards.Add(PlayerDeck.Cards[0]);
                         PlayerDeck.Cards.Remove(PlayerDeck.Cards[0]);
+                        count++;
+                    }
+                    count = 0;
+                    while (count < OpponentCardsInHand)
+                    {
                         OpponentDeck.Cards.Add(OpponentDeck.Cards[0]);
                         OpponentDeck.Cards.Remove(OpponentDeck.Cards[0]);
                         count++;
                     }
-
                     Player.CardCount = PlayerDeck.Cards.Count();
                     Opponent.CardCount = OpponentDeck.Cards.Count();
+                    if (PlayerDeck.Cards.Count == 0)
+                    {
+                        result = Result.OpponentWarWin;
+                        newGame = true;
+                    }
                     IsWar = false;
                     Update();
                 }
-                else if (PlayerHand.Cards[CardsInHand-1].WarValue == OpponentHand.Cards[CardsInHand-1].WarValue)
+                else if (PlayerHand.Cards[PlayerCardsInHand-1].WarValue == OpponentHand.Cards[OpponentCardsInHand-1].WarValue)
                 {
                     result = Result.Tie;
                     IsWar = true;
@@ -130,6 +174,14 @@ namespace ParlorGames.Models
                     PlayerDeck.Cards.Add(OpponentCard);
                     Player.CardCount = PlayerDeck.Cards.Count();
                     Opponent.CardCount = OpponentDeck.Cards.Count();
+                    if(OpponentDeck.Cards.Count == 0)
+                    {
+                        result = Result.PlayerWarWin;
+                        Player.GameWins = 0;
+                        Player.GameLosses = 0;
+                        Player.TotalWins += 1;
+                        newGame = true;
+                    }
                     Update();
                 }
                 else if (PlayerCard.WarValue < OpponentCard.WarValue)
@@ -142,6 +194,14 @@ namespace ParlorGames.Models
                     OpponentDeck.Cards.Add(OpponentCard);
                     Player.CardCount = PlayerDeck.Cards.Count();
                     Opponent.CardCount = OpponentDeck.Cards.Count();
+                    if (PlayerDeck.Cards.Count == 0)
+                    {
+                        result = Result.OpponentWarWin;
+                        Player.GameWins = 0;
+                        Player.GameLosses = 0;
+                        Player.TotalLosses += 1;
+                        newGame = true;
+                    }
                     Update();
                 }
                 else if (PlayerCard.WarValue == OpponentCard.WarValue)
@@ -168,11 +228,11 @@ namespace ParlorGames.Models
         {
             if (Player.Winner == true)
             {
-                Player.TotalWinnings += Bet;
+                Player.GameWins += 1;
             }
             else if (Player.Winner == false)
             {
-                Player.TotalWinnings -= Bet;
+                Player.GameLosses += 1;
             }
         }
 
@@ -187,6 +247,7 @@ namespace ParlorGames.Models
             session.SetObject<Player>("player", Player);
             session.SetObject<Opponent>("opponent", Opponent);    
             session.SetInt32("iswar", Convert.ToInt32(IsWar));
+            session.SetInt32("newgame", Convert.ToInt32(newGame));
         }
     }
 }

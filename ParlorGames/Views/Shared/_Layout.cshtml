@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@model War 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -17,10 +18,19 @@
             <my-temp-message />
             @RenderBody()
         </main>
-
-        <footer>
-            <vc:winnings-display></vc:winnings-display>
-        </footer>
+        @if (ViewBag.Title == "War")
+        {
+    <footer>
+        @*<vc:war-winnings-display></vc:war-winnings-display>*@
+        <h4 class="bg-light p-4">Hands Won: @Model.Player.GameWins     |     Hands Lost: @Model.Player.GameLosses</h4>
+        <h4 class="bg-light p-4">Games Won: @Model.Player.TotalWins    |  Games Lost: @Model.Player.TotalLosses</h4>
+    </footer>
+        }
+        else{
+            <footer>
+                <vc:winnings-display></vc:winnings-display>
+            </footer>
+        }
     </div>
 </body>
 </html>

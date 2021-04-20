@@ -41,6 +41,16 @@ namespace ParlorGames.Controllers
                 TempData["message"] = "THIS MEANS WAR!!!";
                 TempData["background"] = "info";
             }
+            else if (result == Models.War.Result.PlayerWarWin)
+            {
+                TempData["message"] = "You won the War!";
+                TempData["background"] = "success";
+            }
+            else if (result == Models.War.Result.OpponentWarWin)
+            {
+                TempData["message"] = "Darn, Your opponent won the War...";
+                TempData["background"] = "danger";
+            }
 
             return RedirectToAction("Index");
 

@@ -2,8 +2,8 @@
 for details on configuring this project to bundle and minify static web assets. */
 
 .hand img {
-    height: 150px; /*200*/
-    width: 100px; /*150*/
+    height: 75px; /*200*/
+    width: 50px; /*150*/
 }
 
 a.navbar-brand {
