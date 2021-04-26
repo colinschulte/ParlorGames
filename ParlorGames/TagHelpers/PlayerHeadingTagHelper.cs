@@ -20,11 +20,15 @@ namespace ParlorGames.TagHelpers
             if (MyDealer != null) {
                 text = (MyDealer.MustShowCards) ? $"Dealer: {MyDealer.Hand.Total}": "Dealer";
             }
-            if (MyDealer != null)
+            if (MyOpponent != null)
             {
-                text =  (MyOpponent.Hand.HasCards) ? $"Opponent: {MyOpponent.Hand.Total}" : "Opponent";
+                text =  (MyOpponent.Hand.HasCards) ? $"Opponent: {MyOpponent.Hand.Cards[MyOpponent.Hand.Cards.Count-1].WarValue}" : "Opponent";
             }
             if (MyPlayer != null) {
+                if (MyPlayer.WarDeck != null)
+                {
+                    text = (MyOpponent.Hand.HasCards) ? $"Player: {MyPlayer.Hand.Cards[MyPlayer.Hand.Cards.Count - 1].WarValue}" : "Player";
+                }
                 text = (MyPlayer.Hand.HasCards) ? $"Player: {MyPlayer.Hand.Total}" : "Player";
             }
             output.Content.Append(text);
