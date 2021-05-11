@@ -103,5 +103,9 @@ namespace ParlorGames.Controllers
 
 
         }
+        public RedirectToActionResult Back()
+        {
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

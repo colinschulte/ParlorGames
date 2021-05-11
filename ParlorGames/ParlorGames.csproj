@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>ParlorGames</AssemblyName>
+    <RootNamespace>ParlorGames</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
